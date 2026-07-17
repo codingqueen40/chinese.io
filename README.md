@@ -12,9 +12,16 @@ Public showcase of reusable building blocks extracted from a production Mandarin
 | [`adaptive-placement`](./packages/adaptive-placement) | Domain-agnostic “staircase” adaptive level-test engine. Pure logic, fully unit-tested. | ✅ Available |
 | [`streak-flame`](./packages/streak-flame) | Animated CSS streak flame with tiered intensity and `prefers-reduced-motion` support. | ✅ Available |
 
-## Engineering case study *(in progress)*
+## Engineering case study
 
-A write-up of how the underlying app is built: a server-first **Next.js** application with React Server Components and Tailwind, spaced-repetition scheduling via `ts-fsrs`, a PostgreSQL data layer, self-hosted authentication (**Better Auth**) and **Stripe** billing — deployed on EU-hosted infrastructure for a GDPR-aligned, sovereign stack. Includes an architecture diagram, a testing philosophy, and a set of architecture decision records written as narrative (principles, not production values).
+**→ Read the [case study](./docs/case-study.md).**
+
+A write-up of how the underlying app is built: a server-first **Next.js** application with React Server Components and Tailwind, spaced-repetition scheduling via `ts-fsrs`, a PostgreSQL data layer, self-hosted authentication (**Better Auth**) and **Stripe** billing — deployed on EU-hosted infrastructure for a GDPR-aligned, sovereign stack. It covers the architecture (with a diagram), the testing philosophy, and the reasoning behind the load-bearing decisions:
+
+- [ADR 0001 — An EU-sovereign, self-hosted-auth stack](./docs/adr/0001-eu-sovereign-stack.md)
+- [ADR 0002 — Adopt a proven spaced-repetition library instead of rolling my own](./docs/adr/0002-adopt-fsrs.md)
+- [ADR 0003 — Pre-generate audio in batch rather than calling live TTS](./docs/adr/0003-batch-precomputed-audio.md)
+- [ADR 0004 — Enforce entitlement on the server](./docs/adr/0004-server-enforced-entitlement.md)
 
 ## Principles for what goes public
 
