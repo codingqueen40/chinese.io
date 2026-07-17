@@ -1,0 +1,64 @@
+{
+  "name": "streak-flame",
+  "version": "0.1.0",
+  "description": "An animated SVG streak flame for React that grows with the streak. Pure-CSS animation, tiered intensity, prefers-reduced-motion aware.",
+  "keywords": [
+    "streak",
+    "flame",
+    "fire",
+    "react",
+    "svg",
+    "animation",
+    "gamification",
+    "habit",
+    "accessibility",
+    "reduced-motion"
+  ],
+  "license": "MIT",
+  "author": "Codingqueen40",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "styles.css"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./styles.css"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codingqueen40/chinese.io.git",
+    "directory": "packages/streak-flame"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
