@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 260" width="880" height="260" role="img" aria-label="streak-flame: the flame grows from lit to strong to blaze">
+  <title>streak-flame — an animated flame that grows with the streak</title>
+  <defs>
+    <style>
+      .card { fill:#FBFAF7; stroke:#E5E3DB; stroke-width:1.5; }
+      .label { font-family: ui-sans-serif,-apple-system,"Segoe UI",Roboto,Inter,sans-serif; }
+      .outer{fill:#e8650f}.mid{fill:#f4972e}.core{fill:#ffd34d}
+      .blaze .core{fill:#fff0b0}
+      .flick{transform-box:fill-box;transform-origin:50% 92%;animation:sway 1.6s ease-in-out infinite}
+      .m{transform-box:fill-box;transform-origin:50% 90%;animation:mid 1.2s ease-in-out infinite}
+      .c{transform-box:fill-box;transform-origin:50% 88%;animation:core 0.9s ease-in-out infinite}
+      .sp{fill:#ffd34d;opacity:0;transform-box:fill-box;transform-origin:50% 50%;animation:rise 1.4s ease-out infinite}
+      .sp2{animation-delay:.5s}.sp3{animation-delay:.9s}
+      @keyframes sway{0%,100%{transform:scaleY(.96) skewX(-2deg)}50%{transform:scaleY(1.05) skewX(2deg)}}
+      @keyframes mid{0%,100%{transform:scaleY(.97);opacity:.95}50%{transform:scaleY(1.04);opacity:1}}
+      @keyframes core{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.9);opacity:.75}}
+      @keyframes rise{0%{opacity:0;transform:translateY(0) scale(1)}20%{opacity:1}100%{opacity:0;transform:translateY(-34px) scale(.6)}}
+      @media (prefers-reduced-motion: reduce){.flick,.m,.c,.sp{animation:none}.sp{display:none}}
+    </style>
+  </defs>
+
+  <rect class="card" x="1" y="1" width="878" height="258" rx="24" />
+  <text class="label" x="48" y="52" font-size="20" fill="#5F5E5A">streak-flame</text>
+  <text class="label" x="48" y="80" font-size="15" fill="#888780">an animated flame that grows with the streak — pure CSS, reduced-motion aware</text>
+
+  <!-- lit -->
+  <g transform="translate(190,150) scale(0.82)">
+    <g class="flick">
+      <path class="outer" d="M50 8 C64 34 84 46 84 82 C84 112 69 132 50 132 C31 132 16 112 16 82 C16 46 36 34 50 8 Z"/>
+      <path class="mid m" d="M50 40 C60 56 71 64 71 88 C71 110 61 124 50 124 C39 124 29 110 29 88 C29 64 40 56 50 40 Z"/>
+      <path class="core c" d="M50 66 C57 76 62 82 62 98 C62 112 56 122 50 122 C44 122 38 112 38 98 C38 82 43 76 50 66 Z"/>
+    </g>
+  </g>
+  <text class="label" x="190" y="238" text-anchor="middle" font-size="13" fill="#888780">day 1 · lit</text>
+
+  <!-- strong -->
+  <g transform="translate(440,150) scale(1)">
+    <g class="flick">
+      <path class="outer" d="M50 8 C64 34 84 46 84 82 C84 112 69 132 50 132 C31 132 16 112 16 82 C16 46 36 34 50 8 Z"/>
+      <path class="mid m" d="M50 40 C60 56 71 64 71 88 C71 110 61 124 50 124 C39 124 29 110 29 88 C29 64 40 56 50 40 Z"/>
+      <path class="core c" d="M50 66 C57 76 62 82 62 98 C62 112 56 122 50 122 C44 122 38 112 38 98 C38 82 43 76 50 66 Z"/>
+    </g>
+  </g>
+  <text class="label" x="440" y="238" text-anchor="middle" font-size="13" fill="#888780">day 7 · strong</text>
+
+  <!-- blaze -->
+  <g class="blaze" transform="translate(690,150) scale(1.12)">
+    <g class="flick">
+      <path class="outer" d="M50 8 C64 34 84 46 84 82 C84 112 69 132 50 132 C31 132 16 112 16 82 C16 46 36 34 50 8 Z"/>
+      <path class="mid m" d="M50 40 C60 56 71 64 71 88 C71 110 61 124 50 124 C39 124 29 110 29 88 C29 64 40 56 50 40 Z"/>
+      <path class="core c" d="M50 66 C57 76 62 82 62 98 C62 112 56 122 50 122 C44 122 38 112 38 98 C38 82 43 76 50 66 Z"/>
+    </g>
+    <circle class="sp" cx="38" cy="60" r="2.4"/>
+    <circle class="sp sp2" cx="63" cy="52" r="1.8"/>
+    <circle class="sp sp3" cx="52" cy="44" r="2.1"/>
+  </g>
+  <text class="label" x="690" y="238" text-anchor="middle" font-size="13" fill="#888780">day 30 · blaze</text>
+</svg>

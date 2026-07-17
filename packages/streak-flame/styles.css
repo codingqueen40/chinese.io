@@ -1,0 +1,155 @@
+/* streak-flame — pure-CSS animated flame. No JS, no dependencies.
+   Animations run on transform/opacity only (no reflow). Colours, tier scales
+   and the flicker delay are CSS custom properties → theme it by overriding
+   them on .sf-wrap (or any ancestor). `--sf-delay` (set inline by the
+   component) staggers a row of flames. */
+
+.sf-wrap {
+  /* ── themeable tokens (override these) ── */
+  --sf-outer: #e8650f;
+  --sf-mid: #f4972e;
+  --sf-core: #ffd34d;
+  --sf-core-blaze: #fff0b0;
+  --sf-spark: #ffd34d;
+  --sf-scale-lit: 0.82;
+  --sf-scale-strong: 1;
+  --sf-scale-blaze: 1.12;
+
+  display: inline-block;
+  line-height: 0;
+  transform-origin: 50% 100%;
+}
+
+/* Tier scale is carried by the wrapper; the flicker sway lives on an inner
+   group, so the two transforms never overwrite each other. */
+.sf-lit {
+  transform: scale(var(--sf-scale-lit));
+}
+.sf-strong {
+  transform: scale(var(--sf-scale-strong));
+}
+.sf-blaze {
+  transform: scale(var(--sf-scale-blaze));
+}
+
+.sf-svg {
+  display: block;
+}
+
+/* Three flat colour layers; the core brightens at blaze. */
+.sf-outer {
+  fill: var(--sf-outer);
+}
+.sf-mid {
+  fill: var(--sf-mid);
+}
+.sf-core {
+  fill: var(--sf-core);
+}
+.sf-blaze .sf-core {
+  fill: var(--sf-core-blaze);
+}
+
+/* `transform-box: fill-box` makes transform-origin relative to the path
+   geometry rather than the SVG viewport. */
+.sf-flicker {
+  transform-box: fill-box;
+  transform-origin: 50% 92%;
+  animation: sf-sway 1.6s ease-in-out infinite;
+  animation-delay: var(--sf-delay, 0ms);
+}
+.sf-mid {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+  animation: sf-midpulse 1.2s ease-in-out infinite;
+  animation-delay: var(--sf-delay, 0ms);
+}
+.sf-core {
+  transform-box: fill-box;
+  transform-origin: 50% 88%;
+  animation: sf-corepulse 0.9s ease-in-out infinite;
+  animation-delay: var(--sf-delay, 0ms);
+}
+
+/* Sparks: hidden by default, shown only at blaze. */
+.sf-sparks {
+  display: none;
+}
+.sf-blaze .sf-sparks {
+  display: block;
+}
+.sf-sp {
+  fill: var(--sf-spark);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: sf-rise 1.4s ease-out infinite;
+}
+.sf-sp1 {
+  animation-delay: 0s;
+}
+.sf-sp2 {
+  animation-delay: 0.5s;
+}
+.sf-sp3 {
+  animation-delay: 0.9s;
+}
+
+@keyframes sf-sway {
+  0%,
+  100% {
+    transform: scaleY(0.96) skewX(-2deg);
+  }
+  50% {
+    transform: scaleY(1.05) skewX(2deg);
+  }
+}
+@keyframes sf-midpulse {
+  0%,
+  100% {
+    transform: scaleY(0.97);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scaleY(1.04);
+    opacity: 1;
+  }
+}
+@keyframes sf-corepulse {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.9);
+    opacity: 0.75;
+  }
+}
+@keyframes sf-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(0.6);
+  }
+}
+
+/* Accessibility: cut ALL animation — the flame stays visible but still. The
+   sparks (which only read as motion) are hidden. */
+@media (prefers-reduced-motion: reduce) {
+  .sf-flicker,
+  .sf-mid,
+  .sf-core,
+  .sf-sp {
+    animation: none;
+  }
+  .sf-blaze .sf-sparks {
+    display: none;
+  }
+}

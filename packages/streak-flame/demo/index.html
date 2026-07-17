@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>streak-flame — demo</title>
+<style>
+  :root{--bg:#F1EFE8;--card:#FFFFFF;--border:#D3D1C7;--text:#1C1C1A;--muted:#5F5E5A;--faint:#888780;--primary:#E8650F;--radius:16px}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;padding:32px 20px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 4px}h1 code{color:var(--primary);font-size:.85em}
+  .sub{color:var(--muted);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+  .stage{display:flex;align-items:flex-end;justify-content:center;min-height:190px}
+  .none{color:var(--faint);font-size:16px;padding-bottom:70px}
+  .meta{display:flex;gap:14px;justify-content:center;margin-top:8px}
+  .pill{background:#F7F6F2;border:1px solid var(--border);border-radius:999px;padding:6px 16px;font-size:14px;color:var(--muted)}
+  .pill b{color:var(--text)}
+  label{display:block;font-size:13px;color:var(--muted);margin:16px 0 8px;font-weight:500}
+  input[type=range]{width:100%;accent-color:var(--primary)}
+  .rowline{display:flex;gap:26px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
+  .rowline figure{margin:0;text-align:center}
+  .rowline figcaption{font-size:12px;color:var(--faint);margin-top:6px}
+  .toggle{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin-top:6px}
+  .foot{color:var(--faint);font-size:13px;text-align:center;margin-top:8px}.foot a{color:#B14E0C}
+
+  /* ── styles.css (sf-* classes), inlined for the demo ── */
+  .sf-wrap{--sf-outer:#e8650f;--sf-mid:#f4972e;--sf-core:#ffd34d;--sf-core-blaze:#fff0b0;--sf-spark:#ffd34d;
+    --sf-scale-lit:.82;--sf-scale-strong:1;--sf-scale-blaze:1.12;display:inline-block;line-height:0;transform-origin:50% 100%}
+  .sf-lit{transform:scale(var(--sf-scale-lit))}.sf-strong{transform:scale(var(--sf-scale-strong))}.sf-blaze{transform:scale(var(--sf-scale-blaze))}
+  .sf-svg{display:block}
+  .sf-outer{fill:var(--sf-outer)}.sf-mid{fill:var(--sf-mid)}.sf-core{fill:var(--sf-core)}.sf-blaze .sf-core{fill:var(--sf-core-blaze)}
+  .sf-flicker{transform-box:fill-box;transform-origin:50% 92%;animation:sf-sway 1.6s ease-in-out infinite;animation-delay:var(--sf-delay,0ms)}
+  .sf-mid{transform-box:fill-box;transform-origin:50% 90%;animation:sf-midpulse 1.2s ease-in-out infinite;animation-delay:var(--sf-delay,0ms)}
+  .sf-core{transform-box:fill-box;transform-origin:50% 88%;animation:sf-corepulse .9s ease-in-out infinite;animation-delay:var(--sf-delay,0ms)}
+  .sf-sparks{display:none}.sf-blaze .sf-sparks{display:block}
+  .sf-sp{fill:var(--sf-spark);opacity:0;transform-box:fill-box;transform-origin:50% 50%;animation:sf-rise 1.4s ease-out infinite}
+  .sf-sp2{animation-delay:.5s}.sf-sp3{animation-delay:.9s}
+  @keyframes sf-sway{0%,100%{transform:scaleY(.96) skewX(-2deg)}50%{transform:scaleY(1.05) skewX(2deg)}}
+  @keyframes sf-midpulse{0%,100%{transform:scaleY(.97);opacity:.95}50%{transform:scaleY(1.04);opacity:1}}
+  @keyframes sf-corepulse{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.9);opacity:.75}}
+  @keyframes sf-rise{0%{opacity:0;transform:translateY(0) scale(1)}20%{opacity:1}100%{opacity:0;transform:translateY(-34px) scale(.6)}}
+  /* Reduced-motion: real users get this via the OS setting; the toggle simulates it. */
+  .reduce .sf-flicker,.reduce .sf-mid,.reduce .sf-core,.reduce .sf-sp{animation:none}
+  .reduce .sf-blaze .sf-sparks{display:none}
+  @media (prefers-reduced-motion: reduce){
+    .sf-flicker,.sf-mid,.sf-core,.sf-sp{animation:none}.sf-blaze .sf-sparks{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="root">
+  <h1><code>streak-flame</code> — demo</h1>
+  <p class="sub">The flame grows with the streak. 100% CSS animation, reduced-motion aware.</p>
+
+  <div class="card">
+    <div class="stage" id="stage"></div>
+    <div class="meta">
+      <span class="pill">streak <b id="sVal">8</b></span>
+      <span class="pill">tier <b id="tVal">strong</b></span>
+    </div>
+    <label>Streak: drag across the tiers (0 → 45)</label>
+    <input id="streak" type="range" min="0" max="45" value="8" step="1" />
+    <div class="toggle">
+      <input type="checkbox" id="reduce" />
+      <label for="reduce" style="margin:0">Simulate <code>prefers-reduced-motion: reduce</code> (freezes the flame, hides sparks)</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rowline" id="row"></div>
+  </div>
+
+  <p class="foot">Mirrors the package component. Get it: <a href="https://www.npmjs.com/package/streak-flame">npm i streak-flame</a> · MIT © Codingqueen40</p>
+</div>
+
+<script>
+const T = { strong:7, blaze:30 };
+function flameTier(s){ if(s<=0)return "none"; if(s<T.strong)return "lit"; if(s<T.blaze)return "strong"; return "blaze"; }
+
+function flameSVG(tier, size, delay){
+  if(tier==="none") return "";
+  return `<span class="sf-wrap sf-${tier}" style="--sf-delay:${delay||0}ms">
+    <svg viewBox="0 0 100 140" width="${size}" height="${size*140/100}" class="sf-svg" aria-hidden="true">
+      <g class="sf-flicker">
+        <path class="sf-outer" d="M50 8 C64 34 84 46 84 82 C84 112 69 132 50 132 C31 132 16 112 16 82 C16 46 36 34 50 8 Z"/>
+        <path class="sf-mid" d="M50 40 C60 56 71 64 71 88 C71 110 61 124 50 124 C39 124 29 110 29 88 C29 64 40 56 50 40 Z"/>
+        <path class="sf-core" d="M50 66 C57 76 62 82 62 98 C62 112 56 122 50 122 C44 122 38 112 38 98 C38 82 43 76 50 66 Z"/>
+      </g>
+      <g class="sf-sparks">
+        <circle class="sf-sp sf-sp1" cx="38" cy="60" r="2.4"/>
+        <circle class="sf-sp sf-sp2" cx="63" cy="52" r="1.8"/>
+        <circle class="sf-sp sf-sp3" cx="52" cy="44" r="2.1"/>
+      </g>
+    </svg></span>`;
+}
+
+const $=id=>document.getElementById(id);
+function render(){
+  const s=+$("streak").value, tier=flameTier(s);
+  $("sVal").textContent=s; $("tVal").textContent=tier;
+  $("stage").innerHTML = tier==="none" ? '<div class="none">no flame — streak broken</div>' : flameSVG(tier,120,0);
+}
+$("streak").oninput=render;
+$("reduce").onchange=e=>$("root").classList.toggle("reduce", e.target.checked);
+
+// static reference row
+$("row").innerHTML = [[3,"day 3 · lit"],[7,"day 7 · strong"],[30,"day 30 · blaze"]]
+  .map(([s,cap],i)=>`<figure>${flameSVG(flameTier(s),64,i*140)}<figcaption>${cap}</figcaption></figure>`).join("");
+
+render();
+</script>
+</body>
+</html>
