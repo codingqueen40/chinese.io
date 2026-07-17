@@ -9,7 +9,7 @@ Public showcase of reusable building blocks extracted from a production Mandarin
 | Package | What it is | Status |
 |---------|------------|--------|
 | [`pinyin-tone-colors`](./packages/pinyin-tone-colors) | Colour Mandarin hanzi & pinyin by tone — zero-dependency core + optional React component. | ✅ Available |
-| `adaptive-placement` *(planned)* | Domain-agnostic “staircase” adaptive level-test engine. Pure logic, fully unit-tested. | 🔜 Next |
+| [`adaptive-placement`](./packages/adaptive-placement) | Domain-agnostic “staircase” adaptive level-test engine. Pure logic, fully unit-tested. | ✅ Available |
 | `streak-flame` *(planned)* | Animated CSS streak flame with tiered intensity and `prefers-reduced-motion` support. | 🔜 Planned |
 
 ## Engineering case study *(in progress)*

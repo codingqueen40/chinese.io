@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>adaptive-placement — staircase simulator</title>
+<style>
+  :root{
+    --bg:#F1EFE8;--card:#FFFFFF;--border:#D3D1C7;--text:#1C1C1A;--muted:#5F5E5A;--faint:#888780;
+    --primary:#E8650F;--primary-700:#B14E0C;--ok:#1D9E75;--bad:#C92A2A;--info:#1E5FA8;--radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;padding:32px 20px}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 4px}
+  h1 code{color:var(--primary);font-size:.85em}
+  .sub{color:var(--muted);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px}
+  .controls{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end}
+  .ctrl{flex:1;min-width:200px}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 8px;font-weight:500}
+  label b{color:var(--text)}
+  input[type=range]{width:100%;accent-color:var(--primary)}
+  button{border:1px solid var(--primary);background:var(--primary);color:#fff;border-radius:12px;padding:11px 20px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:500}
+  button:hover{background:var(--primary-700);border-color:var(--primary-700)}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .stat{flex:1;min-width:130px;background:#F7F6F2;border:1px solid var(--border);border-radius:12px;padding:14px}
+  .stat .k{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+  .stat .v{font-size:26px;font-weight:600;margin-top:4px}
+  svg{display:block;width:100%;height:auto}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:10px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:6px}
+  .foot{color:var(--faint);font-size:13px;text-align:center;margin-top:8px}
+  .foot a{color:var(--primary-700)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><code>adaptive-placement</code> — staircase simulator</h1>
+  <p class="sub">A simulated taker answers a probabilistic oracle; the engine climbs the staircase and infers a level. Same code as the package core.</p>
+
+  <div class="card">
+    <div class="controls">
+      <div class="ctrl">
+        <label>Taker's true level: <b id="tlVal">4</b> / 7</label>
+        <input id="trueLevel" type="range" min="1" max="7" value="4" step="1" />
+      </div>
+      <div class="ctrl">
+        <label>Reliability: <b id="relVal">85</b>%</label>
+        <input id="rel" type="range" min="55" max="100" value="85" step="1" />
+      </div>
+      <div><button id="run">▶ Run placement</button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Detected level</div><div class="v" id="detected" style="color:var(--primary)">—</div></div>
+      <div class="stat"><div class="k">True level</div><div class="v" id="truth" style="color:var(--info)">—</div></div>
+      <div class="stat"><div class="k">Items used</div><div class="v" id="items">—</div></div>
+      <div class="stat"><div class="k">Stopped by</div><div class="v" id="stop" style="font-size:18px">—</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <svg id="chart" viewBox="0 0 820 340" role="img" aria-label="staircase path"></svg>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--ok)"></span>correct → step up</span>
+      <span><span class="dot" style="background:var(--bad)"></span>wrong → step down</span>
+      <span><span class="dot" style="background:var(--info)"></span>true level</span>
+    </div>
+  </div>
+
+  <p class="foot">Mirrors the package engine. Get it: <a href="https://www.npmjs.com/package/adaptive-placement">npm i adaptive-placement</a> · MIT © Codingqueen40</p>
+</div>
+
+<script>
+// ── Mirror of the package engine (src/core.ts) ──────────────────────
+const CFG = { maxItems:12, minItems:8, passThreshold:0.7, minItemsPerTier:2, stableWindow:4 };
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+function createInitialState(minTier,maxTier){return{minTier,maxTier,currentTier:clamp(Math.round((minTier+maxTier)/2),minTier,maxTier),answers:[]};}
+function nextLevel(s,ok){return{...s,answers:[...s.answers,{tier:s.currentTier,wasCorrect:ok}],currentTier:clamp(s.currentTier+(ok?1:-1),s.minTier,s.maxTier)};}
+function isStable(ans,w){const win=ans.slice(-w).map(a=>a.tier);if(win.length<w)return false;const d=[...new Set(win)].sort((a,b)=>a-b);if(d.length===1)return true;return d.length===2&&d[1]-d[0]===1;}
+function isFinished(s,c=CFG){const n=s.answers.length;if(n>=c.maxItems)return true;return n>=c.minItems&&isStable(s.answers,c.stableWindow);}
+function computeDetectedLevel(ans,c=CFG){if(!ans.length)throw new Error("no answers");const tiers=[...new Set(ans.map(a=>a.tier))].sort((a,b)=>b-a);for(const t of tiers){const seen=ans.filter(a=>a.tier===t);if(seen.length<c.minItemsPerTier)continue;const rate=seen.filter(a=>a.wasCorrect).length/seen.length;if(rate>=c.passThreshold)return t;}return Math.min(...ans.map(a=>a.tier));}
+
+// ── Probabilistic oracle ────────────────────────────────────────────
+function oracle(trueLevel, reliability){
+  return (tier)=> Math.random() < (tier<=trueLevel ? reliability : 1-reliability);
+}
+
+// ── Run + render ────────────────────────────────────────────────────
+const MIN=1, MAX=7;
+const $=id=>document.getElementById(id);
+
+function run(){
+  const trueLevel=+$("trueLevel").value, rel=+$("rel").value/100;
+  const answer=oracle(trueLevel, rel);
+  let s=createInitialState(MIN,MAX);
+  let stop="stable";
+  while(!isFinished(s)){ s=nextLevel(s,answer(s.currentTier)); if(s.answers.length>=CFG.maxItems){break;} }
+  if(s.answers.length>=CFG.maxItems && !(s.answers.length>=CFG.minItems && isStable(s.answers,CFG.stableWindow))) stop="hard cap";
+  const detected=computeDetectedLevel(s.answers);
+  $("detected").textContent="Tier "+detected;
+  $("truth").textContent="Tier "+trueLevel;
+  $("items").textContent=s.answers.length;
+  $("stop").textContent=stop;
+  draw(s.answers, trueLevel, detected);
+}
+
+function draw(ans, trueLevel, detected){
+  const W=820,H=340,padL=44,padB=40,padT=20,padR=16;
+  const n=ans.length;
+  const x=i=> padL + (n<=1?0:(i*(W-padL-padR)/(n-1)));
+  const y=t=> padT + (MAX-t)*(H-padT-padB)/(MAX-MIN);
+  let g="";
+  // gridlines per tier
+  for(let t=MIN;t<=MAX;t++){
+    g+=`<line x1="${padL}" y1="${y(t)}" x2="${W-padR}" y2="${y(t)}" stroke="#EFEDE6"/>`;
+    g+=`<text x="${padL-10}" y="${y(t)+4}" text-anchor="end" font-size="12" fill="#888780">${t}</text>`;
+  }
+  // true-level band
+  g+=`<line x1="${padL}" y1="${y(trueLevel)}" x2="${W-padR}" y2="${y(trueLevel)}" stroke="#1E5FA8" stroke-dasharray="6 5" stroke-width="1.5" opacity=".7"/>`;
+  // staircase path (tier presented at each step)
+  let path="";
+  ans.forEach((a,i)=>{ path+=(i===0?"M":"L")+x(i)+" "+y(a.tier)+" "; });
+  g+=`<path d="${path}" fill="none" stroke="#B14E0C" stroke-width="2.5" stroke-linejoin="round"/>`;
+  // dots
+  ans.forEach((a,i)=>{ g+=`<circle cx="${x(i)}" cy="${y(a.tier)}" r="6" fill="${a.wasCorrect?'#1D9E75':'#C92A2A'}"/>`; });
+  // axis labels
+  g+=`<text x="${padL}" y="${H-12}" font-size="12" fill="#888780">item 1</text>`;
+  g+=`<text x="${W-padR}" y="${H-12}" text-anchor="end" font-size="12" fill="#888780">item ${n}</text>`;
+  $("chart").innerHTML=g;
+}
+
+$("trueLevel").oninput=e=>$("tlVal").textContent=e.target.value;
+$("rel").oninput=e=>$("relVal").textContent=e.target.value;
+$("run").onclick=run;
+run();
+</script>
+</body>
+</html>
