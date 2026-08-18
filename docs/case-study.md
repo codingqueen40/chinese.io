@@ -72,6 +72,10 @@ Because the domain modules are pure, their tests need no database, no browser, a
 
 This is the through-line of the whole project: keep the logic pure, test the invariants, and the stateful shell stays thin and boring — which is exactly what you want from code one person has to maintain.
 
+## One bug, end to end
+
+Tests catch what you thought to assert; the interesting failures are the ones nobody reported. [**Debugging: the daily quota that reset at the wrong moment**](./debugging-timezone-bug.md) walks through one such fix in full — a review queue that computed "today" at UTC midnight instead of the learner's civil day, silently wrong in *every* timezone including the development one. It covers why the bug stayed invisible, the ten-line measurement that turned filed-as-cosmetic debt into a priority, the root cause (a forgotten duplicate of a module the rest of the app already used correctly), and the tests added so the fix did not simply relocate the risk.
+
 ## The extracted packages
 
 Each is a self-contained, MIT-licensed building block with its own README, tests, and a live demo:
